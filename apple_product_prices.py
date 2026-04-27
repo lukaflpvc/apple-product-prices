@@ -266,15 +266,27 @@ def convert_amount(amount: float, source_currency: str, target_currency: str, us
     return (amount / usd_rates[source]) * usd_rates[target]
 
 
-def estimate_tourist_local_price(local_amount: float, region_code: str) -> float:
-    rule = TOURIST_TAX_RULES.get(re.split(r"[-_]", region_code, maxsplit=1)[0].lower())
+def get_region_tax_rule(region_code: str) -> dict | None:
+    return TOURIST_TAX_RULES.get(re.split(r"[-_]", region_code, maxsplit=1)[0].lower())
+
+
+def estimate_default_local_price(local_amount: float, region_code: str) -> float:
+    rule = get_region_tax_rule(region_code)
     if not rule:
         return local_amount
 
-    gross_amount = local_amount
     tax_excluded_rate = rule.get("tax_excluded_rate", 0.0)
     if tax_excluded_rate > 0:
-        gross_amount = local_amount * (1 + tax_excluded_rate)
+        return local_amount * (1 + tax_excluded_rate)
+    return local_amount
+
+
+def estimate_tourist_local_price(default_local_amount: float, region_code: str) -> float:
+    rule = get_region_tax_rule(region_code)
+    if not rule:
+        return default_local_amount
+
+    gross_amount = default_local_amount
 
     tax_included_rate = rule.get("tax_included_rate", 0.0)
     refund_share_of_tax = rule.get("refund_share_of_tax", 0.0)
@@ -350,14 +362,15 @@ def main():
                     fallback_display = str(price_display)
                 continue
 
+            default_local_value = estimate_default_local_price(numeric_price, region_code)
             tourist_local_value = (
-                estimate_tourist_local_price(numeric_price, region_code)
+                estimate_tourist_local_price(default_local_value, region_code)
                 if args.tourist
                 else None
             )
             converted_value = None
             if target_currency and usd_rates is not None:
-                converted_value = convert_amount(numeric_price, currency, target_currency, usd_rates)
+                converted_value = convert_amount(default_local_value, currency, target_currency, usd_rates)
                 if converted_value is None:
                     continue
 
@@ -378,7 +391,7 @@ def main():
             candidate = (
                 comparison_value,
                 str(price_display),
-                numeric_price,
+                default_local_value,
                 converted_value,
                 tourist_local_value,
                 tourist_converted_value,
@@ -498,14 +511,16 @@ def main():
                 if target_currency:
                     converted_display = "-"
                     if numeric_price is not None and usd_rates is not None:
-                        converted = convert_amount(numeric_price, currency, target_currency, usd_rates)
+                        default_local = estimate_default_local_price(numeric_price, region_code)
+                        converted = convert_amount(default_local, currency, target_currency, usd_rates)
                         if converted is not None:
                             converted_display = f"{converted:,.2f}"
                     row.append(converted_display)
                 if args.tourist:
                     tourist_display = "-"
                     if numeric_price is not None:
-                        tourist_local = estimate_tourist_local_price(numeric_price, region_code)
+                        default_local = estimate_default_local_price(numeric_price, region_code)
+                        tourist_local = estimate_tourist_local_price(default_local, region_code)
                         if target_currency and usd_rates is not None:
                             tourist_converted = convert_amount(tourist_local, currency, target_currency, usd_rates)
                             if tourist_converted is not None:
