@@ -26,25 +26,25 @@ apple-prices -p <product> -c <currency> --tourist
 ### Compare one product in USD
 
 ```bash
-uv run apple_product_prices.py --product neo --currency usd
+apple-prices --product neo --currency usd
 ```
 
 ### Add tourist-adjusted estimates
 
 ```bash
-uv run apple_product_prices.py --product neo --currency usd --tourist
+apple-prices --product neo --currency usd --tourist
 ```
 
 ### Show full SKU breakdown
 
 ```bash
-uv run apple_product_prices.py --product neo --currency usd --details
+apple-prices --product neo --currency usd --details
 ```
 
 ### Combine everything
 
 ```bash
-uv run apple_product_prices.py --product neo --currency usd --tourist --details
+apple-prices --product neo --currency usd --tourist --details
 ```
 
 ## Flags
