@@ -1,7 +1,13 @@
 [project]
 name = "apple-store-prices"
-version = "0.1.0"
-description = "Add your description here"
+dynamic = ["version"]
+description = "Compare global Apple product prices in your terminal"
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = []
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.33.1",
+    "rich>=15.0.0",
+]
+
+[project.scripts]
+apple-prices = "apple_product_prices:main"

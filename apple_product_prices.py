@@ -1,11 +1,3 @@
-#!/usr/bin/env -S uv run
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "requests",
-#   "rich",
-# ]
-# ///
 """
 Fetches Apple product pricing from Apple Store regional storefronts.
 Parses the embedded "prices" JSON object from the shop page HTML.
@@ -31,13 +23,20 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-# Mac products: shop path -> display name
+# Apple products: shop path -> display name
 PRODUCTS = {
     "buy-mac/macbook-neo": "MacBook Neo",
     "buy-mac/macbook-air": "MacBook Air",
     "buy-mac/macbook-pro": "MacBook Pro",
     "buy-mac/mac-mini": "Mac Mini",
-    "buy-mac/mac-studio": "Mac Studio",   
+    "buy-mac/mac-studio": "Mac Studio",
+    "buy-ipad/ipad-mini": "iPad Mini",
+    "buy-ipad/ipad": "iPad",
+    "buy-ipad/ipad-air": "iPad Air",
+    "buy-ipad/ipad-pro": "iPad Pro",
+    "buy-iphone/iphone-17-pro": "iPhone 17 Pro",
+    "buy-airpods/airpods-pro-3": "AirPods Pro (3rd Generation)",
+    "buy-airpods/airpods-max": "AirPods Max",
 }
 
 # Apple Store regional storefronts: code -> (display name, currency)
