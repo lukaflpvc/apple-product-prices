@@ -2,6 +2,10 @@
 
 Compare global Apple product prices in your terminal.
 
+<p align="center">
+<img src="img/apple-prices-example.gif" alt="Apple Product Prices usage", width"459">
+</p>
+
 Fetche live pricing from Apple regional storefronts, then presents it in a comparison table.  
 Filter by product, convert to your preferred currency, estimate tourist-adjusted pricing, and optionally view full SKU details.
 
